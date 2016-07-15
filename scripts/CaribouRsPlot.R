@@ -1,6 +1,7 @@
 ### initial biomass plot
 require(ggplot2)
 require(colorRamps)
+filenames <- character()
 for (i in 1:nlayers(caribouRS)) {
     r <- caribouRS[[i]]
     ts <- as.numeric(gsub("[^0-9]", "", names(r)))
@@ -15,7 +16,7 @@ for (i in 1:nlayers(caribouRS)) {
         geom_raster() +
         # ?geom_text(data = NULL, x = maxX, y = maxY,
         #           label = paste0("Time =", ts)) +
-        annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = maxY, hjust = 1, size = 6, colour = "darkred") +
+        annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 6, colour = "darkred") +
         annotate("text", label = paste0("Baseline climate"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
         annotate("text", label = paste0("Harvest + Fire + Budworm"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
         scale_fill_gradientn(name = "Prob. occurence",  limits =c(0,0.85),
@@ -25,7 +26,8 @@ for (i in 1:nlayers(caribouRS)) {
                              values = c(0,  0.25, 0.5, 0.75, 1)) +
         coord_equal()
     
-    png(filename = paste0("caribouRS_initial_LSJ_", i, ".png"),
+    filenames <- append(filenames, paste0("caribouRS_LSJ_", i, ".png"))
+    png(filename = filenames[i],
         width = 8, height = 8, units = "in", res = 150, pointsize = 10,
         bg = "white")
     
