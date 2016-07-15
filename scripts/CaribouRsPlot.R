@@ -45,6 +45,14 @@ for (i in 1:nlayers(caribouRS)) {
     dev.off()
 }
 
+require(animation)
+oopt = ani.options(ani.dev="png", ani.type="png", interval = 0.5, autobrowse = FALSE)
+### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
+im.convert(filenames, output = "test.gif",
+           extra.opts = "", clean = F)
+
+
+
 # 
 # # histogram
 # foo <- biomass[[1]]

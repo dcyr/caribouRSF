@@ -17,7 +17,10 @@ More details will be added soon.
 2. Specify a few user-defined variables in '_simProcessCaribouRSF.R_'.
 3. Run '_simProcessCaribouRSF.R_'.
 
+
+### Example (not actual results)
+
 ![](figures/example.gif)
 
 [1]: https://github.com/dcyr/caribouRSF/archive/master.zip
-getwd()
+
