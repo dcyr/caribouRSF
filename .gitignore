@@ -1,0 +1,17 @@
+.Rhistory
+[0-9]*
+*.Rmd
+*.html
+temp
+*~
+Vignettes/*cache
+*figure-latex
+*figure-docx
+*.rds
+data
+notes
+nonProdCoverPrep.R
+roadDistPrep.R
+initRasters/EOSD
+initRasters/intermediate
+
