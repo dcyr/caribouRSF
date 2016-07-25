@@ -3,6 +3,7 @@
 *.Rmd
 *.html
 temp
+outputs
 *~
 Vignettes/*cache
 *figure-latex
