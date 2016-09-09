@@ -1,7 +1,6 @@
 .Rhistory
 [0-9]*
 *.Rmd
-*.html
 temp
 outputs
 *~
