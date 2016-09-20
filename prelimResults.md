@@ -20,7 +20,7 @@ If you prefer visualizing the following results with static figures instead of a
 
 ### Results (preliminary)
 
-#### Habitat quality (averaged over entire landscape)
+#### Mean probability of occurrence (averaged over entire landscape)
 
 The harvesting levels, relative to recent year levels, are the most important determinant of Caribou's future probability of occurrence when averaged over the entire landscape. Harvesting are inversely proportional to Caribou's future probability of occurrence.
 
@@ -36,7 +36,7 @@ Static figures - Entire landscape (averages)
 * [Fire regime][4]  
 * [Harvesting level][5]  
 
--------
+
 
 #### High quality habitats (averaged over entire landscape)
 
@@ -57,9 +57,9 @@ Static figures - Entire landscape (High quality habitats)
 
 The response of Caribou future resource selection to the various sources of uncertainty will be heterogenous throughout the landscape.
 
-<img src="figures/ecodistricts.png" alt="Drawing" align="middle" style="width: 500px;">
+<img src="figures/ecodistricts.png" alt="Drawing" align="middle" style="width: 400px;">
 
-### Habitat quality  
+### Mean probability of occurrence (averaged by ecodistrict) 
 
 While most of the ecodistricts follow the same trends as those described for the entire landscapes, the northermost ecodistricts (432, 435, 436) appear to be most sensitive to changes in fire regimes.
 
