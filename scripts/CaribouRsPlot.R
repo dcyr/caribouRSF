@@ -17,7 +17,7 @@ for (i in 1:nlayers(caribouRS)) {
         # ?geom_text(data = NULL, x = maxX, y = maxY,
         #           label = paste0("Time =", ts)) +
         annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 6, colour = "darkred") +
-        annotate("text", label = paste0("Baseline climate"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
+        annotate("text", label = paste0("RCP85"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
         annotate("text", label = paste0("Harvest + Fire + Budworm"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
         scale_fill_gradientn(name = "Prob. occurence",  limits =c(0,0.85),
                              #colours = c("white", "palegreen3", "gold2", "darkred"),
