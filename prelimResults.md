@@ -1,11 +1,11 @@
-# Caribou Resource Selection - Preliminary Results
+# Caribou Resource Selection Projection (2000-2100) - Preliminary Results
 Dominic Cyr  
 
 Updated on Sep 20 2016
 
 -------
 
-These are preliminary results obtained by deriving Caribou (forest-dweling ecotype) resource selection function (RSF) from a LANDIS-II simulation ensemble in the Lac St-Jean area. More details about the RSF itself and its implementation can be found [here (to be completed soon)][1].
+These are preliminary results obtained by applying a Resource Selection Function (RSF) for Caribou (forest-dweling ecotype) to a LANDIS-II simulation ensemble in the Lac St-Jean area. More details about the RSF itself and its implementation can be found [here][1] (to be completed soon).
 
 
 ### Simulation ensemble description
