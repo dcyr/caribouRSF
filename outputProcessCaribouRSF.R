@@ -146,7 +146,9 @@ for (i in c("ecodistrict", "total")) {
         plotDim <- c(1200,1000)
         pRatio <- 0.75
         df[,c("h50", "h75", "h90", "h95")] <- df[,c("h50", "h75", "h90", "h95")] * 100
+        fileNameHQH <- character()
     }
+    fileNameMean <- character()
     ### shuffling ids
     idShuffle <- sample(unique(df$id))
     df$id <- idShuffle[df$id]
@@ -160,8 +162,8 @@ for (i in c("ecodistrict", "total")) {
     df[,"fire"] <-treatments[ match(df$treatment, treatments$treatments), "fire"]
     df$time <- df$time + 2000    
 
-    
     for (t in c("scenario", "fire", "harvest")) {
+        
         if (t == "scenario") {
             cols <- c("darkolivegreen3", "dodgerblue2", "goldenrod1", "red3")
             lTitle = "Climate change scenario"
@@ -172,7 +174,7 @@ for (i in c("ecodistrict", "total")) {
         }
         if (t == "harvest") {
             cols <- c("cadetblue4","goldenrod3")
-            lTitle = "Harvest level"
+            lTitle = "Harvesting level"
         }
             
         g <- ggplot(df, aes_string(x = "time", y = "caribouRS_mean", group = "id", color = t)) +
@@ -198,7 +200,9 @@ for (i in c("ecodistrict", "total")) {
             g <- g + facet_wrap(~ ecodistrict)
         }
         
-        png(filename= paste0("caribouRS_mean_", i, "_", t ,".png"),
+        fName <- paste0("caribouRS_mean_", i, "_", t ,".png")
+        fileNameMean <- append(fileNameMean, fName)
+        png(filename = fName,
             width = plotDim[1], height = plotDim[2], res = 300)
         
             print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
@@ -210,7 +214,10 @@ for (i in c("ecodistrict", "total")) {
         
         #####################################################################################
         ### habitat
-        if (i == "total") {
+        
+        
+        #segDF <- distinct(df[, c("scenario", "fire", "harvest")])
+       if (i == "total") {
             g <- ggplot(df, aes_string(group = "id", color = t)) +
                 geom_line(aes_string(x = "df$time", y = "df$h75"),
                           stat="smooth",method = "loess", span = 0.4,
@@ -232,15 +239,16 @@ for (i in c("ecodistrict", "total")) {
                       axis.title = element_text(size = rel(pRatio)),
                       axis.title.x=element_blank()) +
                 labs(title = "Relative abundance of high quality habitats",
-                     y = "Relative abundance\n") +
-                annotate("text", x = min(df$time) + 1, y = c(9, 24), label = c("Best 10%", "Best 25%"),
+                     y = "Relative abundance (% of landscape)\n") +
+                annotate("text", x = min(df$time) + 1, y = c(9, 24), label = c("Initial best 10%", "Initial best 25%"),
                          color = "grey25", size  = 2, hjust = 0, vjust = 1)
             
             if(i == "ecodistrict") {
                 g <- g + facet_wrap(~ ecodistrict)
             }
-            
-            png(filename= paste0("caribouRS_hqh_", i, "_", t, ".png"),
+            fName <- paste0("caribouRS_HQH_", i, "_", t ,".png")
+            fileNameHQH <- append(fileNameHQH, fName)
+            png(filename= fName,
                 width = plotDim[1], height = plotDim[2], res = 300)
             
             print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
@@ -251,18 +259,31 @@ for (i in c("ecodistrict", "total")) {
             dev.off()
         }
     }
+    fileNameMean <- paste(getwd(), fileNameMean, sep = "/")
+    
+    require(animation)
+    oopt = ani.options(ani.dev="png", ani.type="png", interval = 1.5, autobrowse = FALSE)
+    ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
+    im.convert(fileNameMean, output = paste0("caribouRS_mean_", i, "_anim.gif"),
+               extra.opts = "", clean = F)
+    ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
+    
+    if(i == "total") {
+        fileNameHQH <- paste(getwd(), fileNameHQH, sep = "/")
+        im.convert(fileNameHQH, output = paste0("caribouRS_HQH_", i, "_anim.gif"),
+               extra.opts = "", clean = F)
+    }
 }
 
 
     
-    
+ 
     
 ##################
 
 r <- ecodistricts
 rDF <- rasterToPoints(r)
 df <- data.frame(rDF)
-head(df)
 df$ecodistricts <- as.factor(df$ecodistricts)
 
 ##################
@@ -283,7 +304,7 @@ g <- ggplot(data = df, aes(x, y, fill = ecodistricts)) +
     theme_bw() +
     geom_raster() +
     annotate("text", x = coordLab$X, y = coordLab$Y, label = coordLab$label,
-             color = "grey25", size  = 4) +
+             color = "grey25", size  = 3) +
     #geom_text(data = NULL, aes(label = coordLab$label, x = coordLab$X, y = coordLab$Y)) +
     coord_equal() +
     scale_fill_manual(values = colEcodistrict) 
@@ -291,11 +312,19 @@ g <- ggplot(data = df, aes(x, y, fill = ecodistricts)) +
                       #                     reverse = TRUE))
 
 png(filename = "ecodistricts.png",
-    width = 1800, height = 1800,
+    width = 1200, height = 1200,
     res = 300)
 
-    print(g + theme(axis.title.x=element_blank(),
-                   axis.title.y=element_blank()) +
+    print(g + theme(plot.title = element_text(size = rel(0.8)),
+                    axis.title.x = element_blank(),
+                    axis.title.y = element_blank(),
+                    axis.ticks = element_blank(),
+                    axis.text.x = element_blank(),
+                    axis.text.y =  element_blank(),
+                    strip.background = element_blank(),
+                    strip.text.x = element_blank(),
+                    legend.text = element_text(size = rel(0.5)),
+                    legend.title = element_text(size = rel(0.7))) +
               labs(title = "Ecodistricts") +
               guides(fill=FALSE))
         
