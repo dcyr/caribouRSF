@@ -1,7 +1,7 @@
 # Caribou Resource Selection Function
 Dominic Cyr  
 
-Updated on Jul 15 2016
+Updated on Sep 20 2016
 
 -------
 
@@ -9,11 +9,11 @@ In this repo you will find everything necessary to compute resource selection fu
 
 The RSF is currently implemented for a specific area north of the Lac St-Jean, but should be relatively easily adaptable.
 
-More details will be added soon.
+To jump directly to preliminary results, [click here][1].
 
 ## Instruction
 
-1. Clone the repo on your machine (or [download manually][1]).
+1. Clone the repo on your machine (or [download manually][2]).
 2. Specify a few user-defined variables in '_simProcessCaribouRSF.R_'.
 3. Run '_simProcessCaribouRSF.R_'.
 
@@ -22,5 +22,6 @@ More details will be added soon.
 
 ![](figures/example.gif)
 
-[1]: https://github.com/dcyr/caribouRSF/archive/master.zip
+[1]: https://github.com/dcyr/caribouRSF/blob/master/prelimResults.md
+[2]: https://github.com/dcyr/caribouRSF/archive/master.zip
 
