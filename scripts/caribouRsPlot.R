@@ -1,5 +1,5 @@
 ### initial biomass plot
-
+rm(list = ls())
 caribouRS <- get(load("/media/dcyr/Seagate Backup Plus Drive/caribouRsOutputs/caribouRS_LSJ_baseline_BudwormBaselineFireHarvest_1.RData"))
 setwd("/home/dcyr/Travail/SCF/CBFA/caribou")
 wwd <- paste(getwd(), Sys.Date(), sep = "/")
@@ -25,10 +25,10 @@ for (i in 1:nlayers(caribouRS)) {
         geom_raster() +
         # ?geom_text(data = NULL, x = maxX, y = maxY,
         #           label = paste0("Time =", ts)) +
-        annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 6, colour = "darkred") +
-        annotate("text", label = paste0("Climate: baseline"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
-        annotate("text", label = paste0("Fire regime: baseline"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
-        annotate("text", label = paste0("Harvest level: 100%"), x = rangeX[2], y = rangeY[1]+0.9*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
+        annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 3, colour = "darkred") +
+        annotate("text", label = paste0("Climate: baseline"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
+        annotate("text", label = paste0("Fire regime: baseline"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
+        annotate("text", label = paste0("Harvest level: 100%"), x = rangeX[2], y = rangeY[1]+0.9*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
         scale_fill_gradientn(name = "Prob. occurence",  limits =c(0,0.85),
                              #colours = c("white", "palegreen3", "gold2", "darkred"),
                              colours = c("white", "lightblue", "seagreen4", "gold2", "darkred"),
@@ -38,19 +38,21 @@ for (i in 1:nlayers(caribouRS)) {
     
     filenames <- append(filenames, paste0("caribouRS_LSJ_", i, ".png"))
     png(filename = filenames[i],
-        width = 6, height = 8, units = "in", res = 150, pointsize = 10,
+        width = 900, height = 1200, units = "px", res = 300, pointsize = 8,
         bg = "white")
     
-        print(p + ggtitle("Relative probability of occurence of Caribou") +
+        print(p + ggtitle("Probability of occurence of Caribou") +
     
-                  theme(axis.title.x = element_blank(),
+                  theme(plot.title = element_text(size = rel(0.8)),
+                        axis.title.x = element_blank(),
                         axis.title.y = element_blank(),
                         axis.ticks = element_blank(),
                         axis.text.x = element_blank(),
                         axis.text.y =  element_blank(),
                         strip.background = element_blank(),
-                        strip.text.x = element_blank()),
-              plot.margin = unit( c(0,0,2,0) , units = "lines" ))
+                        strip.text.x = element_blank(),
+                        legend.text = element_text(size = rel(0.5)),
+                        legend.title = element_text(size = rel(0.7))))
     #strip.text.x = element_text(size=6)))
     dev.off()
 }
@@ -58,7 +60,7 @@ for (i in 1:nlayers(caribouRS)) {
 require(animation)
 oopt = ani.options(ani.dev="png", ani.type="png", interval = 0.5, autobrowse = FALSE)
 ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
-im.convert(filenames, output = "test.gif",
+im.convert(filenames, output = "example.gif",
            extra.opts = "", clean = F)
 
 
