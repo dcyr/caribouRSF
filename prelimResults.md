@@ -53,13 +53,11 @@ Static figures - Entire landscape (High quality habitats)
 
 -------
 
-### By ecodistricts
-
 The response of Caribou future resource selection to the various sources of uncertainty will be heterogenous throughout the landscape.
 
-<img src="figures/ecodistricts.png" alt="Drawing" align="middle" style="width: 400px;">
+![](figures/ecodistricts.png)
 
-### Mean probability of occurrence (averaged by ecodistrict) 
+#### Mean probability of occurrence (averaged by ecodistrict) 
 
 While most of the ecodistricts follow the same trends as those described for the entire landscapes, the northermost ecodistricts (432, 435, 436) appear to be most sensitive to changes in fire regimes.
 
