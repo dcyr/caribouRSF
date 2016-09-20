@@ -1,6 +1,14 @@
 ### initial biomass plot
+
+caribouRS <- get(load("/media/dcyr/Seagate Backup Plus Drive/caribouRsOutputs/caribouRS_LSJ_baseline_BudwormBaselineFireHarvest_1.RData"))
+setwd("/home/dcyr/Travail/SCF/CBFA/caribou")
+wwd <- paste(getwd(), Sys.Date(), sep = "/")
+dir.create(wwd)
+setwd(wwd)
+
 require(ggplot2)
 require(colorRamps)
+require(raster)
 filenames <- character()
 for (i in 1:nlayers(caribouRS)) {
     r <- caribouRS[[i]]
@@ -13,12 +21,14 @@ for (i in 1:nlayers(caribouRS)) {
     
     p <- ggplot(data = df, aes_string("x", "y", fill = colnames(df)[3])) +
         theme_bw() +
+        theme(legend.position="top", legend.direction="horizontal") +
         geom_raster() +
         # ?geom_text(data = NULL, x = maxX, y = maxY,
         #           label = paste0("Time =", ts)) +
         annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 6, colour = "darkred") +
-        annotate("text", label = paste0("RCP85"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
-        annotate("text", label = paste0("Harvest + Fire + Budworm"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
+        annotate("text", label = paste0("Climate: baseline"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
+        annotate("text", label = paste0("Fire regime: baseline"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
+        annotate("text", label = paste0("Harvest level: 100%"), x = rangeX[2], y = rangeY[1]+0.9*(rangeY[2]-rangeY[1]), hjust = 1,  colour = "black") +
         scale_fill_gradientn(name = "Prob. occurence",  limits =c(0,0.85),
                              #colours = c("white", "palegreen3", "gold2", "darkred"),
                              colours = c("white", "lightblue", "seagreen4", "gold2", "darkred"),
@@ -28,19 +38,19 @@ for (i in 1:nlayers(caribouRS)) {
     
     filenames <- append(filenames, paste0("caribouRS_LSJ_", i, ".png"))
     png(filename = filenames[i],
-        width = 8, height = 8, units = "in", res = 150, pointsize = 10,
+        width = 6, height = 8, units = "in", res = 150, pointsize = 10,
         bg = "white")
     
-    print(p + ggtitle("Relative probability of occurence of Caribou\n") +
-
-              theme(axis.title.x = element_blank(),
-                    axis.title.y = element_blank(),
-                    axis.ticks = element_blank(),
-                    axis.text.x = element_blank(),
-                    axis.text.y =  element_blank(),
-                    strip.background = element_blank(),
-                    strip.text.x = element_blank()),
-          plot.margin = unit( c(0,0,2,0) , units = "lines" ))
+        print(p + ggtitle("Relative probability of occurence of Caribou") +
+    
+                  theme(axis.title.x = element_blank(),
+                        axis.title.y = element_blank(),
+                        axis.ticks = element_blank(),
+                        axis.text.x = element_blank(),
+                        axis.text.y =  element_blank(),
+                        strip.background = element_blank(),
+                        strip.text.x = element_blank()),
+              plot.margin = unit( c(0,0,2,0) , units = "lines" ))
     #strip.text.x = element_text(size=6)))
     dev.off()
 }
