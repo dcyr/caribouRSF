@@ -1,7 +1,7 @@
 # Caribou Resource Selection Projection (2000-2100) - Preliminary Results
 Dominic Cyr  
 
-Updated on Sep 20 2016
+Updated on Sep 21 2016
 
 -------
 
@@ -12,8 +12,8 @@ These are preliminary results obtained by applying a Resource Selection Function
 
 * A total of 67 simulations make up the simulation ensemble.  
 * Climate change scenarios, fire regimes, and harvesting levels define each simulated treatment.  
-* Fire regimes and climate change scenarios are simulated coupled with each other, as well as uncoupled (using the baseline fire regime).
-* Each treatments are replicated 5 times (with a few examples). 
+* Fire regimes and climate change scenarios are simulated coupled with each other, as well as uncoupled (using a constant baseline fire regime for each RCP).
+* Each treatments are replicated 5 times (with a few exceptions). 
 
 If you prefer visualizing the following results with static figures instead of animations, click on the links below each one of them (or [clone the entire repo][2]).
 
@@ -22,7 +22,7 @@ If you prefer visualizing the following results with static figures instead of a
 
 #### Mean probability of occurrence (averaged over entire landscape)
 
-The harvesting levels, relative to recent year levels, are the most important determinant of Caribou's future probability of occurrence when averaged over the entire landscape. Harvesting are inversely proportional to Caribou's future probability of occurrence.
+The harvesting levels, relative to recent year levels, are the most important determinant of Caribou's future probability of occurrence when averaged over the entire landscape. Caribou's future probability of occurrence is inversely proportional to harvesting level.
 
 Harvesting levels are followed by climate change scenarios and fire regimes, which both also have subtantial impacts on Caribou's future probability of occurrence. The detrimental effects of climate change and fire regime increase with the intensity of the radiative forcing.
 
@@ -40,7 +40,7 @@ Static figures - Entire landscape (averages)
 
 #### High quality habitats (averaged over entire landscape)
 
-Trends are similar for the relative abundance of high quality habitats, which were defined using thresholds derived from initial conditions. (Each curves indicate the proportion of the landscape that contains habitats with greater RS probability than those associated with the top 10th and 25th percentiles in the initial landscape.)
+The abundance of high quality habitats (HQH), defined using thresholds corresponding to the top 10% and top 25% habitats in the initial landscape, is mostly affected by fire regime, closely followed by harvesting levels. (Each curves indicate the proportion of the landscape that contains habitats with RS probability greater than those associated with the top 10th and 25th percentiles in the initial landscape.)
 
 ![](figures/caribouRS_HQH_total_anim.gif)
 
