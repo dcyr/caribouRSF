@@ -1,19 +1,80 @@
 # Caribou Resource Selection Projection (2000-2100) - Preliminary Results
 Dominic Cyr  
 
-Updated on Sep 21 2016
+Updated on Sep 30 2016
 
 -------
 
-These are preliminary results obtained by applying a Resource Selection Function (RSF) for Caribou (forest-dweling ecotype) to a LANDIS-II simulation ensemble in the Lac St-Jean area. More details about the RSF itself and its implementation can be found [here][1] (to be completed soon).
+These are preliminary results obtained by applying a Resource Selection Function (RSF) for Caribou (forest-dweling ecotype) to a LANDIS-II simulation ensemble in the Lac St-Jean area.
+
+### Description of simulation ensemble
+
+&nbsp; 
+
+#### Projected climate
+
+Factor | Levels | Number of levels  
+----------|----------|:--------:
+Climate change scenario &nbsp;&nbsp; | RCP 2.6, RCP 4.5, RCP 8.5 | __3__  
+Fire regime | baseline, projection<sup>1</sup> | __2__
+Harvesting levels | 50%, 100% | __2__ 
+
+<sup>1</sup>Fire regimes projections are based on the climate change scenario being simulated, i.e. corresponding RCP. 
+
+* 12 treatments with projected climate (3 scenarios x 2 fire regimes x 2 harvesting levels) 
+
+&nbsp;
+
+
+#### Baseline climate
+
+Factor | Levels | Number of levels  
+----------|----------|:--------:  
+Climate change scenario &nbsp;&nbsp; | baseline &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | __1__  
+Fire regime | baseline | __1__
+Harvesting levels | 50%, 100% | __2__  
+
+* 2 treatments with baseline climate (1 scenario x 1 fire regime x 2 harvesting levels)  
+
+&nbsp; 
+
+#### Summary
+
+Each of the 14 treatments was replicated 5 times.   
+
+* __Total (expected):__ 70 simulations (3 simulations failed)  
+* __Total (final):__ 67 simulations  
+
+
+
+-------
+
+Thus, the entire simulations ensemble was planned to contain 70 simulations. However, three of those failed which caused the number of simulations to be reduced to 67.
+
+
+
+
+
+*Climate change scenarios, fire regimes, and harvesting levels define each simulated treatment.  
+
+
+* Each treatments are replicated 5 times (with a few exceptions). 
+
+Projected climate (RCPs): 3
+baseline simulations: 
+
+* A total of 70 simulations were planned (3 of which failed)
+* A total of 67 simulations make up the simulation ensemble.  
+
+
+More details about the RSF itself and its implementation can be found [here][1] (to be completed soon).
 
 
 ### Simulation ensemble description
 
-* A total of 67 simulations make up the simulation ensemble.  
-* Climate change scenarios, fire regimes, and harvesting levels define each simulated treatment.  
-* Fire regimes and climate change scenarios are simulated coupled with each other, as well as uncoupled (using a constant baseline fire regime for each RCP).
-* Each treatments are replicated 5 times (with a few exceptions). 
+
+
+
 
 If you prefer visualizing the following results with static figures instead of animations, click on the links below each one of them (or [clone the entire repo][2]).
 

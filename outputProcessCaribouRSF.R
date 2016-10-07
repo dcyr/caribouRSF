@@ -8,114 +8,132 @@ wwd <- (paste(getwd(), Sys.Date(), sep ="/"))
 dir.create(wwd)
 setwd(wwd)
 ##################################################################
-# sourcing function, loading libraries
+
+
+
+########################################################################################
+########################################################################################
+### computing ecodistrict averages, storing into tidy data frame
+require(doSNOW)
 require(raster)
 require(reshape2)
-
-outputDir <- "/media/dcyr/Seagate Backup Plus Drive/caribouRsOutputs/"
-#outputDir <- "/media/dcyr/Data/caribouRsOutputs/"
+#outputDir <- "/media/dcyr/Seagate Backup Plus Drive/caribouRsOutputs/"
+outputDir <- "/media/dcyr/Data/caribouRsOutputs/"
 outputFiles <- list.files(outputDir)
 simInfo <- strsplit(gsub(".RData", "", outputFiles), "_")
-
-
-# loading raster(s) for zonal statistics
 ecodistricts <- raster("../gis/ecodistricts.tif")
+########################################################################################
+nClusters <- 2 ## about 4.5 Gb of RAM by core for LSJ
+cl <- makeCluster(nClusters)
+registerDoSNOW(cl)
+caribouRS_ecodist_mean <- foreach(i = seq_along(outputFiles), .combine = "rbind")  %dopar% {#
+    require(raster)
+    require(reshape2)
+    a <- simInfo[[i]][2]
+    s <- simInfo[[i]][3]
+    t <- simInfo[[i]][4]
+    r <- as.numeric(simInfo[[i]][5])
+
+    ### loading raster stack
+    caribouRS <- get(load(paste(outputDir, outputFiles[i], sep = "/")))
+
+    ### computing zonal averages
+    x <- as.data.frame(zonal(caribouRS, ecodistricts, fun = 'mean'))
+    names(x)[1] <- "ecodistrict"
+    x <- melt(x, id = "ecodistrict", variable.name = "time", value.name = "caribouRS_mean")
+    x$time <- as.numeric(gsub("[^0-9]", "", x$time))
+    x <- data.frame(area = a,
+                    scenario = s,
+                    treatment = t,
+                    replicate = r,
+                    x)
+    return(x)
+}
+stopCluster(cl)
+### a little tyding up before saving to file
+caribouRS_ecodist_mean$ecodistrict <- as.factor(caribouRS_ecodist_mean$ecodistrict)
+caribouRS_ecodist_mean$replicate <- as.factor(caribouRS_ecodist_mean$replicate)
+df <- caribouRS_ecodist_mean
+fire <- factor(rep("Fire regime: baseline", nrow(df)), levels = c("Fire regime: baseline", "Fire regime: projected"))
+fire[grep("Projected", df$treatment)] <- "Fire regime: projected"
+harvest <- factor(rep("Harvesting level: 100%", nrow(df)), levels = c("Harvesting level: 50%", "Harvesting level: 100%"))
+harvest[grep("0.5", df$treatment)] <- "Harvesting level: 50%"
+
+caribouRS_ecodist_mean <- data.frame(caribouRS_ecodist_mean, fire, harvest)
+########################################################################################
+save(caribouRS_ecodist_mean, file = "caribouRS_ecodist_mean_DF.RData")
+########################################################################################
+########################################################################################
 
 
-# ########################################################################################
-# ########################################################################################
-# ### computing ecodistrict averages, storing into tidy data frame
-# require(doSNOW)
-# ########################################################################################
-# nClusters <- 6 ## about 4.5 Gb of RAM by core for LSJ
-# cl <- makeCluster(nClusters)
-# registerDoSNOW(cl)
-# caribouRS_ecodist_mean <- foreach(i = seq_along(outputFiles), .combine = "rbind")  %dopar% {#
-#     require(raster)
-#     require(reshape2)
-#     a <- simInfo[[i]][2]
-#     s <- simInfo[[i]][3]
-#     t <- simInfo[[i]][4]
-#     r <- as.numeric(simInfo[[i]][5])
-# 
-#     ### loading raster stack
-#     caribouRS <- get(load(paste(outputDir, outputFiles[i], sep = "/")))
-# 
-#     ### computing zonal averages
-#     x <- as.data.frame(zonal(caribouRS, ecodistricts, fun = 'mean'))
-#     names(x)[1] <- "ecodistrict"
-#     x <- melt(x, id = "ecodistrict", variable.name = "time", value.name = "caribouRS_mean")
-#     x$time <- as.numeric(gsub("[^0-9]", "", x$time))
-#     x <- data.frame(area = a,
-#                     scenario = s,
-#                     treatment = t,
-#                     replicate = r,
-#                     x)
-#     return(x)
-# }
-# stopCluster(cl)
-# ### a little tyding up before saving to file
-# caribouRS_ecodist_mean$ecodistrict <- as.factor(caribouRS_ecodist_mean$ecodistrict)
-# caribouRS_ecodist_mean$replicate <- as.factor(caribouRS_ecodist_mean$replicate)
-# ########################################################################################
-# save(caribouRS_ecodist_mean, file = "caribouRS_ecodist_mean_DF.RData")
-# ########################################################################################
-# ########################################################################################
+########################################################################################
+########################################################################################
+### computing ecodistrict averages, storing into tidy data frame
+require(doSNOW)
+require(raster)
+require(reshape2)
+#outputDir <- "/media/dcyr/Seagate Backup Plus Drive/caribouRsOutputs/"
+outputDir <- "/media/dcyr/Data/caribouRsOutputs/"
+outputFiles <- list.files(outputDir)
+simInfo <- strsplit(gsub(".RData", "", outputFiles), "_")
+ecodistricts <- raster("../gis/ecodistricts.tif")
+########################################################################################
+nClusters <- 10 ## takes less memory than for ecodistricts (~2.5 Gb by thread)
+cl <- makeCluster(nClusters)
+registerDoSNOW(cl)
 
+caribouRS_mean <- foreach(i = seq_along(outputFiles), .combine = "rbind")  %dopar% {#
+    require(raster)
+    require(reshape2)
+    a <- simInfo[[i]][2]
+    s <- simInfo[[i]][3]
+    t <- simInfo[[i]][4]
+    r <- as.numeric(simInfo[[i]][5])
 
-# ########################################################################################
-# ########################################################################################
-# ### computing ecodistrict averages, storing into tidy data frame
-# require(doSNOW)
-# ########################################################################################
-# nClusters <- 10 ## takes less memory than for ecodistricts (~2.5 Gb by thread)
-# cl <- makeCluster(nClusters)
-# registerDoSNOW(cl)
-# 
-# caribouRS_mean <- foreach(i = seq_along(outputFiles), .combine = "rbind")  %dopar% {#
-#     require(raster)
-#     require(reshape2)
-#     a <- simInfo[[i]][2]
-#     s <- simInfo[[i]][3]
-#     t <- simInfo[[i]][4]
-#     r <- as.numeric(simInfo[[i]][5])
-#     
-#     ### loading raster stack
-#     caribouRS <- get(load(paste(outputDir, outputFiles[i], sep = "/")))
-#     time <- as.numeric(gsub("[^0-9]", "", names(caribouRS)))
-#     x <- list()
-#     for (l in 1:nlayers(caribouRS)) {
-#         v <- values(caribouRS[[l]])
-#         v <- v[!is.na(v)]
-#         if(l == 1) {
-#             threshold <- quantile(v, c(0.5, 0.75, 0.9, 0.95))
-#             npixel <- length(v)
-#         }
-# 
-#         x[[l]] <- data.frame(area = a,
-#                         scenario = s,
-#                         treatment = t,
-#                         time = time[l],
-#                         replicate = r,
-#                         caribouRS_mean = mean(v),
-#                         h50 = sum(v>threshold[1])/npixel,
-#                         h75= sum(v>threshold[2])/npixel,
-#                         h90 = sum(v>threshold[3])/npixel,
-#                         h95 = sum(v>threshold[4])/npixel)
-#         
-#     }
-#     x <- do.call("rbind", x)
-#     
-#     return(x)
-# }
-# stopCluster(cl)
-# ### a little tyding up before saving to file
-# 
-# caribouRS_mean$replicate <- as.factor(caribouRS_mean$replicate)
-# ########################################################################################
-# save(caribouRS_mean, file = "caribouRS_mean_DF.RData")
-# ########################################################################################
-# ########################################################################################
+    ### loading raster stack
+    caribouRS <- get(load(paste(outputDir, outputFiles[i], sep = "/")))
+    time <- as.numeric(gsub("[^0-9]", "", names(caribouRS)))
+    x <- list()
+    for (l in 1:nlayers(caribouRS)) {
+        v <- values(caribouRS[[l]])
+        v <- v[!is.na(v)]
+        if(l == 1) {
+            threshold <- quantile(v, c(0.5, 0.75, 0.9, 0.95))
+            npixel <- length(v)
+        }
+
+        x[[l]] <- data.frame(area = a,
+                        scenario = s,
+                        treatment = t,
+                        time = time[l],
+                        replicate = r,
+                        caribouRS_mean = mean(v),
+                        h50 = sum(v>threshold[1])/npixel,
+                        h75= sum(v>threshold[2])/npixel,
+                        h90 = sum(v>threshold[3])/npixel,
+                        h95 = sum(v>threshold[4])/npixel)
+
+    }
+    x <- do.call("rbind", x)
+
+    return(x)
+}
+stopCluster(cl)
+### a little tyding up before saving to file
+
+caribouRS_mean$replicate <- as.factor(caribouRS_mean$replicate)
+df <- caribouRS_mean
+
+fire <- factor(rep("Fire regime: baseline", nrow(df)), levels = c("Fire regime: baseline", "Fire regime: projected"))
+fire[grep("Projected", df$treatment)] <- "Fire regime: projected"
+harvest <- factor(rep("Harvesting level: 100%", nrow(df)), levels = c("Harvesting level: 50%", "Harvesting level: 100%"))
+harvest[grep("0.5", df$treatment)] <- "Harvesting level: 50%"
+caribouRS_mean <- data.frame(caribouRS_mean, fire, harvest)
+
+########################################################################################
+save(caribouRS_mean, file = "caribouRS_mean_DF.RData")
+########################################################################################
+########################################################################################
 
 
 
@@ -127,7 +145,6 @@ require(ggplot2)
 require(dplyr)
 caribouRS_ecodist_mean <- get(load("../processedOutputs/caribouRS_ecodist_mean_DF.RData"))
 caribouRS_mean <- get(load("../processedOutputs/caribouRS_mean_DF.RData"))
-caribouRS_mean[,"caribouRS_mean"] <- caribouRS_mean$mean
 #####################################################################################
 #####################################################################################
 
@@ -141,7 +158,6 @@ for (i in c("ecodistrict", "total")) {
     }
     if (i == "total") {
         df <- caribouRS_mean
-        
         df <- mutate(df, id = as.numeric(as.factor(paste(scenario, treatment, replicate))))
         plotDim <- c(1200,1000)
         pRatio <- 0.75
@@ -153,13 +169,7 @@ for (i in c("ecodistrict", "total")) {
     idShuffle <- sample(unique(df$id))
     df$id <- idShuffle[df$id]
     
-    treatments <- levels(df$treatment)
-    treatments <- data.frame(treatments, harvest = c("50%", "100%", "50%", "100%","50%", "100%"),
-                             fire = c("baseline","baseline", "baseline","baseline","projected", "projected"))
     
-    
-    df[,"harvest"] <-treatments[ match(df$treatment, treatments$treatments), "harvest"]
-    df[,"fire"] <-treatments[ match(df$treatment, treatments$treatments), "fire"]
     df$time <- df$time + 2000    
 
     for (t in c("scenario", "fire", "harvest")) {
@@ -170,11 +180,11 @@ for (i in c("ecodistrict", "total")) {
         }
         if (t == "fire") {
             cols <-  c("darkolivegreen","indianred")
-            lTitle = "Fire regime"
+            lTitle = ""
         }
         if (t == "harvest") {
             cols <- c("cadetblue4","goldenrod3")
-            lTitle = "Harvesting level"
+            lTitle = ""
         }
             
         g <- ggplot(df, aes_string(x = "time", y = "caribouRS_mean", group = "id", color = t)) +
@@ -194,7 +204,7 @@ for (i in c("ecodistrict", "total")) {
                   axis.title = element_text(size = rel(pRatio)),
                   axis.title.x=element_blank()) +
             labs(title = "Evolution of Caribou habitat quality",
-                 y = "Mean probability of occurrence\n")
+                 y = "RS call\n")
         
         if(i == "ecodistrict") {
             g <- g + facet_wrap(~ ecodistrict)
@@ -243,18 +253,16 @@ for (i in c("ecodistrict", "total")) {
                 annotate("text", x = min(df$time) + 1, y = c(9, 24), label = c("Initial best 10%", "Initial best 25%"),
                          color = "grey25", size  = 2, hjust = 0, vjust = 1)
             
-            if(i == "ecodistrict") {
-                g <- g + facet_wrap(~ ecodistrict)
-            }
+    
             fName <- paste0("caribouRS_HQH_", i, "_", t ,".png")
             fileNameHQH <- append(fileNameHQH, fName)
             png(filename= fName,
                 width = plotDim[1], height = plotDim[2], res = 300)
             
-            print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
-                            axis.text.y = element_text(size = 8 * pRatio),
-                            strip.text = element_text(size = 8 * pRatio)))
-            
+                print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
+                                axis.text.y = element_text(size = 8 * pRatio),
+                                strip.text = element_text(size = 8 * pRatio)))
+                
             
             dev.off()
         }
