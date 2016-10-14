@@ -25,7 +25,7 @@ totalArea <- sum(values(studyAreaR), na.rm = T) * 6.25
 ############################################################
 ############################################################
 
-fond <- get_map(location = "Lac St-Jean", zoom = 6)
+fond <- get_map(location = "Lac St-Jean", zoom = 6, source = "google")
 
 map <- ggmap(fond) +
     geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
@@ -51,6 +51,7 @@ png(filename = "studyArea.png",
                                  minor_breaks = waiver()) +
               scale_y_continuous(breaks = yBreaks,
                                  minor_breaks = waiver()) +
+              theme_bw() +
               theme(plot.title = element_text(size = rel(1.2)),
                     axis.title.x = element_blank(),
                     axis.title.y = element_blank(),
