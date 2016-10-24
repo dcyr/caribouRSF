@@ -95,7 +95,7 @@ for (i in seq_along(simDir)) {
         fireDir <- NULL
     }
     tsf <- tsfFnc(fireDir = fireDir,
-                      initTSF = initTSF, timesteps = timesteps)
+                  initTSF = initTSF, timesteps = timesteps)
     # tsh
     if ("harvest" %in% outputDirs) {
         harvDir <- paste(simFolder, "harvest", sep = "/")
@@ -103,8 +103,8 @@ for (i in seq_along(simDir)) {
         harvDir <- NULL
     }
     tsh <- tshFnc(harvDir = harvDir,
-                      initTSH = initTSH, timesteps = timesteps)
-
+                  initTSH = initTSH, timesteps = timesteps)
+    
     maxAge <- maxAgeFnc(maxAgeFolder = paste(simFolder, "output/cohort-stats", sep = "/"),
                         crsRef = areaExtent, timesteps = timesteps)
     #
@@ -120,7 +120,7 @@ for (i in seq_along(simDir)) {
     tsfClass <- reclassify(tsf, rcl = m, include.lowest = T, right = F)
     tshClass <- reclassify(tsh, rcl = m, include.lowest = T, right = F)
     rm(list = c("age", "maxAge"))
-
+    
     ### age class 0-9 
     # fire
     fire0_9 <- tsfClass == 1    
@@ -154,7 +154,7 @@ for (i in seq_along(simDir)) {
     ### age class 90+
     conif90 <- ageClass == 4
     conif90[hardwoods] <- 0
-
+    
     ### Some tidying up necessary to eliminate a few remaining aberration 
     ### due some Landis active site being considered as wetlands
     ###

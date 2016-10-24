@@ -171,7 +171,7 @@ caribouRS_mean <- get(load("../processedOutputs/caribouRS_mean_DF.RData"))
 #####################################################################################
 #####################################################################################
 
-for (i in c("ecodistrict", "total")) {
+for (i in c("total")) {#c("ecodistrict", "total")) {
     if(i == "ecodistrict") {
         df <- caribouRS_ecodist_mean
         
@@ -181,10 +181,19 @@ for (i in c("ecodistrict", "total")) {
     }
     if (i == "total") {
         df <- caribouRS_mean
-        df <- mutate(df, id = as.numeric(as.factor(paste(scenario, treatment, replicate))))
-        plotDim <- c(1200,1000)
+        df <- df %>%
+            mutate(id = as.numeric(as.factor(paste(scenario, treatment, replicate)))) %>%
+            select(id, scenario, fire, harvest, time, caribouRS_mean, h75)
+        ## removing incomplete simulations
+        idSubsample <- df %>%
+            filter(time == 100)
+        idSubsample <- unique(idSubsample$id)
+        df <- filter(df, id %in% idSubsample)
+        
+        ## for nicer plotting
+        plotDim <- c(1400, 900)
         pRatio <- 0.75
-        df[,c("h50", "h75", "h90", "h95")] <- df[,c("h50", "h75", "h90", "h95")] * 100
+        df$h75 <- df$h75 * 100
         fileNameHQH <- character()
     }
     fileNameMean <- character()
@@ -212,8 +221,8 @@ for (i in c("ecodistrict", "total")) {
             
         g <- ggplot(df, aes_string(x = "time", y = "caribouRS_mean", group = "id", color = t)) +
             geom_line(stat="smooth",method = "loess", span = 0.4,
-                      size = 0.5,
-                      alpha = 0.5) +
+                      size = 0.3,
+                      alpha = 0.75) +
             scale_colour_manual(values = cols,
                                 guide = guide_legend(title = lTitle,
                                                      title.theme = element_text(size = 8 * pRatio, angle = 0),
@@ -227,7 +236,7 @@ for (i in c("ecodistrict", "total")) {
                   axis.title = element_text(size = rel(pRatio)),
                   axis.title.x=element_blank()) +
             labs(title = "Evolution of Caribou habitat quality",
-                 y = "RS call\n")
+                 y = "Average RS call\n")
         
         if(i == "ecodistrict") {
             g <- g + facet_wrap(~ ecodistrict)
@@ -254,12 +263,12 @@ for (i in c("ecodistrict", "total")) {
             g <- ggplot(df, aes_string(group = "id", color = t)) +
                 geom_line(aes_string(x = "df$time", y = "df$h75"),
                           stat="smooth",method = "loess", span = 0.4,
-                          size = 0.5,
-                          alpha = 0.5) +
-                geom_line(aes_string(x = "df$time", y = "df$h90"),
-                          stat="smooth",method = "loess", span = 0.4,
-                          size = 0.5,
-                          alpha = 0.5) +
+                          size = 0.3,
+                          alpha = 0.75) +
+                # geom_line(aes_string(x = "df$time", y = "df$h90"),
+                #           stat="smooth",method = "loess", span = 0.4,
+                #           size = 0.5,
+                #           alpha = 0.5) +
                 scale_colour_manual(values = cols,
                                     guide = guide_legend(title = lTitle,
                                                          title.theme = element_text(size = 8 * pRatio, angle = 0),
@@ -271,12 +280,12 @@ for (i in c("ecodistrict", "total")) {
                       plot.title = element_text(size = rel(pRatio)),
                       axis.title = element_text(size = rel(pRatio)),
                       axis.title.x=element_blank()) +
-                labs(title = "Relative abundance of high quality habitats",
-                     y = "Relative abundance (% of landscape)\n") +
-                annotate("text", x = min(df$time) + 1, y = c(9, 24), label = c("Initial best 10%", "Initial best 25%"),
-                         color = "grey25", size  = 2, hjust = 0, vjust = 1)
+                labs(title = "Relative abundance of high quality habitats (HQH*)",
+                     y = "Relative abundance (% of landscape)\n") #+
             
-    
+            ### coordinate of the description
+            yLabel <- ggplot_build(g)$panel$ranges[[1]]$y.range[2]
+            
             fName <- paste0("caribouRS_HQH_", i, "_", t ,".png")
             fileNameHQH <- append(fileNameHQH, fName)
             png(filename= fName,
@@ -284,7 +293,9 @@ for (i in c("ecodistrict", "total")) {
             
                 print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
                                 axis.text.y = element_text(size = 8 * pRatio),
-                                strip.text = element_text(size = 8 * pRatio)))
+                                strip.text = element_text(size = 8 * pRatio)) +
+                          annotate("text", x = min(df$time) + 1, y = yLabel, label = c("*HQH: As defined by the best quartile in initial landscape."),
+                                   color = "grey25", size  = 2, hjust = 0, vjust = 1))
                 
             
             dev.off()
@@ -310,57 +321,57 @@ for (i in c("ecodistrict", "total")) {
     
  
     
-##################
-
-r <- ecodistricts
-rDF <- rasterToPoints(r)
-df <- data.frame(rDF)
-df$ecodistricts <- as.factor(df$ecodistricts)
-
-##################
-##################
-#######  Plotting
-
-require(RColorBrewer)
-
-meanX <- as.matrix(by(df$x, df$ecodistricts, mean, na.rm = TRUE))
-meanY <- as.matrix(by(df$y, df$ecodistricts, mean, na.rm = TRUE))
-
-coordLab <- data.frame(X = meanX, Y = meanY, label = rownames(meanY))
-
-colEcodistrict <- brewer.pal(8, "Dark2")
-colEcodistrict <- rep(colEcodistrict, 2)
-
-g <- ggplot(data = df, aes(x, y, fill = ecodistricts)) +
-    theme_bw() +
-    geom_raster() +
-    annotate("text", x = coordLab$X, y = coordLab$Y, label = coordLab$label,
-             color = "grey25", size  = 3) +
-    #geom_text(data = NULL, aes(label = coordLab$label, x = coordLab$X, y = coordLab$Y)) +
-    coord_equal() +
-    scale_fill_manual(values = colEcodistrict) 
-                      #guide = guide_legend(title = "Ecodistrict",
-                      #                     reverse = TRUE))
-
-png(filename = "ecodistricts.png",
-    width = 1200, height = 1200,
-    res = 300)
-
-    print(g + theme(plot.title = element_text(size = rel(0.8)),
-                    axis.title.x = element_blank(),
-                    axis.title.y = element_blank(),
-                    axis.ticks = element_blank(),
-                    axis.text.x = element_blank(),
-                    axis.text.y =  element_blank(),
-                    strip.background = element_blank(),
-                    strip.text.x = element_blank(),
-                    legend.text = element_text(size = rel(0.5)),
-                    legend.title = element_text(size = rel(0.7))) +
-              labs(title = "Ecodistricts") +
-              guides(fill=FALSE))
-        
-              
-dev.off()
+# ##################
+# 
+# r <- ecodistricts
+# rDF <- rasterToPoints(r)
+# df <- data.frame(rDF)
+# df$ecodistricts <- as.factor(df$ecodistricts)
+# 
+# ##################
+# ##################
+# #######  Plotting
+# 
+# require(RColorBrewer)
+# 
+# meanX <- as.matrix(by(df$x, df$ecodistricts, mean, na.rm = TRUE))
+# meanY <- as.matrix(by(df$y, df$ecodistricts, mean, na.rm = TRUE))
+# 
+# coordLab <- data.frame(X = meanX, Y = meanY, label = rownames(meanY))
+# 
+# colEcodistrict <- brewer.pal(8, "Dark2")
+# colEcodistrict <- rep(colEcodistrict, 2)
+# 
+# g <- ggplot(data = df, aes(x, y, fill = ecodistricts)) +
+#     theme_bw() +
+#     geom_raster() +
+#     annotate("text", x = coordLab$X, y = coordLab$Y, label = coordLab$label,
+#              color = "grey25", size  = 3) +
+#     #geom_text(data = NULL, aes(label = coordLab$label, x = coordLab$X, y = coordLab$Y)) +
+#     coord_equal() +
+#     scale_fill_manual(values = colEcodistrict) 
+#                       #guide = guide_legend(title = "Ecodistrict",
+#                       #                     reverse = TRUE))
+# 
+# png(filename = "ecodistricts.png",
+#     width = 1200, height = 1200,
+#     res = 300)
+# 
+#     print(g + theme(plot.title = element_text(size = rel(0.8)),
+#                     axis.title.x = element_blank(),
+#                     axis.title.y = element_blank(),
+#                     axis.ticks = element_blank(),
+#                     axis.text.x = element_blank(),
+#                     axis.text.y =  element_blank(),
+#                     strip.background = element_blank(),
+#                     strip.text.x = element_blank(),
+#                     legend.text = element_text(size = rel(0.5)),
+#                     legend.title = element_text(size = rel(0.7))) +
+#               labs(title = "Ecodistricts") +
+#               guides(fill=FALSE))
+#         
+#               
+# dev.off()
 
 
 
