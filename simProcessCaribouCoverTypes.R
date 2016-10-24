@@ -27,7 +27,7 @@ simRoot <- "/media/dcyr/Data/Sims/LSJ" ## where the simulations are
 ### might have to specify working directory if you don't run the script from the command line
 # setwd("/home/dcyr/Travail/SCF/CBFA/caribou")
 area <- "LSJ"
-timesteps <- c(10, 100)#"all"#c(0, 50, 100, 150, 200, 250, 300)#"all"# ### can either be 'all' or a vector of user-selected timesteps
+timesteps <- c(0,100)#"all"#c(0, 50, 100, 150, 200, 250, 300)#"all"# ### can either be 'all' or a vector of user-selected timesteps
 ncores <- floor(0.9*detectCores())  ### will use 90% of cores, rounded to the lower integer
 ### ... unless that is 0, then it is set to 1
 ncores <- ifelse(ncores == 0, 1, ncores) 
