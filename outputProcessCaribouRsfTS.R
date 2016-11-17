@@ -224,18 +224,14 @@ for (i in c("total")) {#c("ecodistrict", "total")) {
                       size = 0.3,
                       alpha = 0.75) +
             scale_colour_manual(values = cols,
-                                guide = guide_legend(title = lTitle,
-                                                     title.theme = element_text(size = 8 * pRatio, angle = 0),
-                                                     label.theme = element_text(size = 8 * pRatio, angle = 0),
-                                                     #label.position = "bottom", label.hjust = 0.5,
+                                guide = guide_legend(#label.position = "bottom", label.hjust = 0.5,
                                                      override.aes = list(size = 2,
                                                                          alpha = 1))) +
             theme_linedraw() +
             theme(legend.position="top", legend.direction="horizontal",
-                  plot.title = element_text(size = rel(pRatio)),
-                  axis.title = element_text(size = rel(pRatio)),
+                  plot.title = element_text(size = rel(1)),
                   axis.title.x=element_blank()) +
-            labs(title = "Evolution of Caribou habitat quality",
+            labs(#title = "Evolution of Caribou habitat quality",
                  y = "Average RS call\n")
         
         if(i == "ecodistrict") {
@@ -247,10 +243,12 @@ for (i in c("total")) {#c("ecodistrict", "total")) {
         png(filename = fName,
             width = plotDim[1], height = plotDim[2], res = 300)
         
-            print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
-                            axis.text.y = element_text(size = 8 * pRatio),
-                            strip.text = element_text(size = 8 * pRatio)))
-        
+            print(g + theme(axis.text.x = element_text(size = rel(1), angle = 45, hjust = 1),
+                            axis.text.y = element_text(size = rel(1)),
+                            axis.title = element_text(size = rel(0.75)),
+                            legend.title = element_blank(),
+                            legend.text = element_text(size = rel(0.75))))
+            
         
         dev.off()
         
@@ -265,23 +263,13 @@ for (i in c("total")) {#c("ecodistrict", "total")) {
                           stat="smooth",method = "loess", span = 0.4,
                           size = 0.3,
                           alpha = 0.75) +
-                # geom_line(aes_string(x = "df$time", y = "df$h90"),
-                #           stat="smooth",method = "loess", span = 0.4,
-                #           size = 0.5,
-                #           alpha = 0.5) +
                 scale_colour_manual(values = cols,
-                                    guide = guide_legend(title = lTitle,
-                                                         title.theme = element_text(size = 8 * pRatio, angle = 0),
-                                                         label.theme = element_text(size = 8 * pRatio, angle = 0),
-                                                         override.aes = list(size = 2,
-                                                                             alpha = 1))) +
+                                    guide = guide_legend(override.aes = list(size = 2,alpha = 1))) +
                 theme_linedraw() +
                 theme(legend.position="top", legend.direction="horizontal",
-                      plot.title = element_text(size = rel(pRatio)),
-                      axis.title = element_text(size = rel(pRatio)),
                       axis.title.x=element_blank()) +
-                labs(title = "Relative abundance of high quality habitats (HQH*)",
-                     y = "Relative abundance (% of landscape)\n") #+
+                labs(#title = "Relative abundance of high quality habitats (HQH*)",
+                     y = "Relative abundance\n(% of landscape)\n") #+
             
             ### coordinate of the description
             yLabel <- ggplot_build(g)$panel$ranges[[1]]$y.range[2]
@@ -291,30 +279,32 @@ for (i in c("total")) {#c("ecodistrict", "total")) {
             png(filename= fName,
                 width = plotDim[1], height = plotDim[2], res = 300)
             
-                print(g + theme(axis.text.x = element_text(size = 8 * pRatio, angle = 45, hjust = 1),
-                                axis.text.y = element_text(size = 8 * pRatio),
-                                strip.text = element_text(size = 8 * pRatio)) +
-                          annotate("text", x = min(df$time) + 1, y = yLabel, label = c("*HQH: As defined by the best quartile in initial landscape."),
-                                   color = "grey25", size  = 2, hjust = 0, vjust = 1))
+                print(g + theme(axis.text.x = element_text(size = rel(1), angle = 45, hjust = 1),
+                                axis.text.y = element_text(size = rel(1)),
+                                axis.title = element_text(size = rel(0.75)),
+                                legend.title = element_blank(),
+                                legend.text = element_text(size = rel(0.75)))) #+
+                          # annotate("text", x = min(df$time) + 1, y = yLabel, label = c("*HQH: As defined by the best quartile in initial landscape."),
+                          #          color = "grey25", size  = 2, hjust = 0, vjust = 1))
                 
             
             dev.off()
         }
     }
-    fileNameMean <- paste(getwd(), fileNameMean, sep = "/")
-    
-    require(animation)
-    oopt = ani.options(ani.dev="png", ani.type="png", interval = 1.5, autobrowse = FALSE)
-    ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
-    im.convert(fileNameMean, output = paste0("caribouRS_mean_", i, "_anim.gif"),
-               extra.opts = "", clean = F)
-    ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
-    
-    if(i == "total") {
-        fileNameHQH <- paste(getwd(), fileNameHQH, sep = "/")
-        im.convert(fileNameHQH, output = paste0("caribouRS_HQH_", i, "_anim.gif"),
-               extra.opts = "", clean = F)
-    }
+    # fileNameMean <- paste(getwd(), fileNameMean, sep = "/")
+    # 
+    # require(animation)
+    # oopt = ani.options(ani.dev="png", ani.type="png", interval = 1.5, autobrowse = FALSE)
+    # ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
+    # im.convert(fileNameMean, output = paste0("caribouRS_mean_", i, "_anim.gif"),
+    #            extra.opts = "", clean = F)
+    # ### (Windows users may want to add):  ani.options(convert = 'c:/program files/imagemagick/convert.exe')
+    # 
+    # if(i == "total") {
+    #     fileNameHQH <- paste(getwd(), fileNameHQH, sep = "/")
+    #     im.convert(fileNameHQH, output = paste0("caribouRS_HQH_", i, "_anim.gif"),
+    #            extra.opts = "", clean = F)
+    # }
 }
 
 

@@ -49,17 +49,17 @@ p <- ggplot(data = df, aes_string("longitude", "latitude", fill = colnames(df)[3
 
 
 png(filename = paste("caribouRS_Init.png"),
-    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
     bg = "white")
 
-    print(p + labs(title = title) +
+    print(p + #labs(title = title) +
               theme(plot.title = element_text(size = rel(0.6)),
                     axis.title.x = element_text(size = rel(0.7)),
                     axis.title.y = element_text(size = rel(0.7)),
-                    axis.text.x = element_text(size = rel(0.5)),
-                    axis.text.y =  element_text(size = rel(0.5)),
-                    legend.title = element_text(size = rel(0.5)),
-                    legend.text = element_text(size = rel(0.4))))
+                    axis.text.x = element_text(size = rel(0.75)),
+                    axis.text.y =  element_text(size = rel(0.75)),
+                    legend.title = element_text(size = rel(1)),
+                    legend.text = element_text(size = rel(0.75))))
 dev.off()
 
 
@@ -100,22 +100,22 @@ for (s in levels(caribouRsMeanFinalDF$scenario)) {
 
 
     png(filename = paste0("caribouRS_MeanFinalAbs_", s, ".png"),
-        width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+        width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
         bg = "white")
 
-    print(p + ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate")) +
+    print(p + #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate")) +
 
-              theme(plot.title = element_text(size = rel(0.8)),
-                    axis.title.x = element_text(size = rel(0.7)),
-                    axis.title.y = element_text(size = rel(0.7)),
+              theme(plot.title = element_text(size = rel(1)),
+                    axis.title.x = element_text(size = rel(0.75)),
+                    axis.title.y = element_text(size = rel(0.75)),
                     #axis.ticks = element_blank(),
-                    axis.text.x = element_text(size = rel(0.5)),
-                    axis.text.y =  element_text(size = rel(0.5)),
+                    axis.text.x = element_text(size = rel(0.75)),
+                    axis.text.y =  element_text(size = rel(0.75)),
                     #strip.background = element_blank(),
-                    strip.text.y = element_text(size = rel(0.7)),
-                    strip.text.x = element_text(size = rel(0.7)),
-                    legend.text = element_text(size = rel(0.4)),
-                    legend.title = element_text(size = rel(0.7))))
+                    strip.text.y = element_text(size = rel(1)),
+                    strip.text.x = element_text(size = rel(1)),
+                    legend.title = element_text(size = rel(1)),
+                    legend.text = element_text(size = rel(0.75))))
     #strip.text.x = element_text(size=6)))
     dev.off()
 }
@@ -166,24 +166,23 @@ g <- ggplot(data = df, aes(longitude, latitude, fill = value)) +
 
 
 png(filename = paste0("caribouRS_FinalAbsEnsemble", ".png"),
-    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
     bg = "white")
 
-    print(g + labs(title = title) +
+    print(g + #labs(title = title) +
               #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate\n", names(variables[i]))) +
               theme(legend.position="top", legend.direction="horizontal",
                     plot.title = element_text(size = rel(0.6)),
                     axis.title.x = element_text(size = rel(0.7)),
                     axis.title.y = element_text(size = rel(0.7)),
                     #axis.ticks = element_blank(),
-                    axis.text.x = element_text(size = rel(0.5)),
-                    axis.text.y =  element_text(size = rel(0.5)),
+                    axis.text.x = element_text(size = rel(0.75)),
+                    axis.text.y =  element_text(size = rel(0.75)),
                     #strip.background = element_blank(),
-                    strip.text.y = element_text(size = rel(0.7)),
-                    strip.text.x = element_text(size = rel(0.7)),
-                    legend.title = element_text(size = rel(0.5)),
-                    legend.text = element_text(size = rel(0.4)))
-
+                    strip.text.y = element_text(size = rel(1)),
+                    strip.text.x = element_text(size = rel(1)),
+                    legend.title = element_text(size = rel(1)),
+                    legend.text = element_text(size = rel(0.6)))
              )
 
 dev.off()
@@ -202,6 +201,18 @@ require(ggplot2)
 studyArea <- spTransform(studyArea, CRS("+init=epsg:4326"))
 studyAreaF <- fortify(studyArea)
 
+# colScale <- scale_fill_gradient2(name = "RS call departure\n(final - initial)",
+#                                  limits = c(floor(quantile(caribouRsFinalDiffDF$value, 0.005)*20)/20, ceiling(quantile(caribouRsFinalDiffDF$value, 0.995)*20)/20),
+#                                  low = "#4477AA", mid = "white", high = "#BB4444", midpoint = 0)
+
+colScale <- scale_fill_gradientn(name = "RS call departure\n(final - initial)",
+                     # limits = c(floor(quantile(df$value, 0.005)*20)/20, ceiling(quantile(df$value, 0.995)*20)/20),
+                     limits = c(-0.55, 0.55),
+                     #colours = c("darkred", "darkred", "gold2", "white", "palegreen3", "darkgreen", "darkgreen"),
+                     colours = c("darkblue", "darkblue", "lightblue","white", "gold2", "darkred", "darkred")) 
+ +#,#c("white", "lightblue", "seagreen4", "gold2", "darkred"),
+
+
 for (s in levels(caribouRsFinalDiffDF$scenario)) {
 
     df <- filter(caribouRsFinalDiffDF, scenario == s)
@@ -214,18 +225,7 @@ for (s in levels(caribouRsFinalDiffDF$scenario)) {
         theme(legend.position="top", legend.direction="horizontal") +
         geom_raster() +
         facet_grid(fire ~ harvest) +
-        # ?geom_text(data = NULL, x = maxX, y = maxY,
-        #           label = paste0("Time =", ts)) +
-        # annotate("text", label = paste0("Time = ", ts), x = rangeX[2], y = rangeY[2], hjust = 1, size = 3, colour = "darkred") +
-        # annotate("text", label = paste0("Climate: baseline"), x = rangeX[2], y = rangeY[1]+0.96*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
-        # annotate("text", label = paste0("Fire regime: baseline"), x = rangeX[2], y = rangeY[1]+0.93*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
-        # annotate("text", label = paste0("Harvest level: 100%"), x = rangeX[2], y = rangeY[1]+0.9*(rangeY[2]-rangeY[1]), hjust = 1, size = 2, colour = "black") +
-        scale_fill_gradientn(name = "RS call\n(variation between inital\nconditions and 2100)", limits = c(-.7,.7),
-
-                             colours = c("darkblue", "darkblue", "lightblue","white", "gold2", "darkred", "darkred")) +
-                             #colours = c("darkred", "darkred", "gold2", "white", "palegreen3", "darkgreen", "darkgreen")) +#,#c("white", "lightblue", "seagreen4", "gold2", "darkred"),
-        #colours = c(matlab.like2(5)),
-        #values = c(-0.6  -0.3, 0, 0.3, 0.6)) +
+        colScale +    
         coord_fixed(ratio = figRatio) +
         geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
                      colour = 'grey25', fill = NA, alpha = 1, size = .1)
@@ -234,22 +234,22 @@ for (s in levels(caribouRsFinalDiffDF$scenario)) {
 
 
     png(filename = paste0("caribouRS_MeanFinalDiff_", s, ".png"),
-        width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+        width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
         bg = "white")
 
-        print(p + ggtitle(paste0("Evolution of caribou habitat from initial conditions to 2100 - ", s, " climate")) +
+        print(p + #ggtitle(paste0("Evolution of caribou habitat from initial conditions to 2100 - ", s, " climate")) +
 
-                              theme(plot.title = element_text(size = rel(0.8)),
+                              theme(plot.title = element_text(size = rel(0.6)),
                                     axis.title.x = element_text(size = rel(0.7)),
                                     axis.title.y = element_text(size = rel(0.7)),
                                     #axis.ticks = element_blank(),
-                                    axis.text.x = element_text(size = rel(0.5)),
-                                    axis.text.y =  element_text(size = rel(0.5)),
+                                    axis.text.x = element_text(size = rel(0.75)),
+                                    axis.text.y =  element_text(size = rel(0.75)),
                                     #strip.background = element_blank(),
-                                    strip.text.y = element_text(size = rel(0.7)),
-                                    strip.text.x = element_text(size = rel(0.7)),
-                                    legend.text = element_text(size = rel(0.4)),
-                                    legend.title = element_text(size = rel(0.5))))
+                                    strip.text.y = element_text(size = rel(1)),
+                                    strip.text.x = element_text(size = rel(1)),
+                                    legend.text = element_text(size = rel(0.6)),
+                                    legend.title = element_text(size = rel(1))))
               #strip.text.x = element_text(size=6)))
     dev.off()
 }
@@ -292,32 +292,30 @@ g <- ggplot(data = df, aes(longitude, latitude, fill = value)) +
     theme(legend.position="top", legend.direction="horizontal") +
     geom_raster() +
     facet_grid( ~ var) +
-    scale_fill_gradientn(name = "RS call\n(variation between inital\nconditions and 2100)", limits = c(-.7,.7),
-                         
-                         colours = c("darkblue", "darkblue", "lightblue","white", "gold2", "darkred", "darkred")) +
+    colScale +
     coord_fixed(ratio = figRatio) +
     geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
                  colour = 'grey25', fill = NA, alpha = 1, size = .1)
 
 
 png(filename = paste0("caribouRS_FinalDiffEnsemble", ".png"),
-    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+    width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
     bg = "white")
 
-print(g + labs(title = title) +
+print(g + #labs(title = title) +
           #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate\n", names(variables[i]))) +
           theme(legend.position="top", legend.direction="horizontal",
                 plot.title = element_text(size = rel(0.6)),
                 axis.title.x = element_text(size = rel(0.7)),
                 axis.title.y = element_text(size = rel(0.7)),
                 #axis.ticks = element_blank(),
-                axis.text.x = element_text(size = rel(0.5)),
-                axis.text.y =  element_text(size = rel(0.5)),
+                axis.text.x = element_text(size = rel(0.75)),
+                axis.text.y =  element_text(size = rel(0.75)),
                 #strip.background = element_blank(),
-                strip.text.y = element_text(size = rel(0.7)),
-                strip.text.x = element_text(size = rel(0.7)),
-                legend.title = element_text(size = rel(0.5)),
-                legend.text = element_text(size = rel(0.4)))
+                strip.text.y = element_text(size = rel(1)),
+                strip.text.x = element_text(size = rel(1)),
+                legend.title = element_text(size = rel(1)),
+                legend.text = element_text(size = rel(0.6)))
       
 )
 
@@ -373,7 +371,7 @@ df <- as.data.frame(df)
 ### extracting final ensemble description (min, max, mean, consensus)
 ensembleDf  <- df %>%
     filter(time == ts,
-           scenario != "baseline")#,
+           scenario != "baseline") %>%#,
            #harvest != "Harvesting level: 50%") %>%
     group_by(ecodistrict) %>%
     summarize(caribouRS_mean_finalMax = caribouRS_mean[which.max(caribouRS_mean)],
@@ -450,24 +448,25 @@ for (i in seq_along(variables)) {
             width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
             bg = "white")
 
-            print(g + labs(title = paste0("Projected variations in abundance of Caribou high quality habitats (HQH)\nFrom 2010 to 2100 - ", s, " climate")) +
+            print(g + #labs(title = paste0("Projected variations in abundance of Caribou high quality habitats (HQH)\nFrom 2010 to 2100 - ", s, " climate")) +
                       #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate\n", names(variables[i]))) +
 
-                      theme(plot.title = element_text(size = rel(0.7)),
+                      theme(plot.title = element_text(size = rel(0.6)),
                             axis.title.x = element_text(size = rel(0.7)),
                             axis.title.y = element_text(size = rel(0.7)),
                             #axis.ticks = element_blank(),
-                            axis.text.x = element_text(size = rel(0.5)),
-                            axis.text.y =  element_text(size = rel(0.5)),
+                            axis.text.x = element_text(size = rel(0.75)),
+                            axis.text.y =  element_text(size = rel(0.75)),
                             #strip.background = element_blank(),
-                            strip.text.y = element_text(size = rel(0.7)),
-                            strip.text.x = element_text(size = rel(0.7)),
-                            legend.title = element_text(size = rel(0.5)),
-                            legend.text = element_text(size = rel(0.4))))
+                            strip.text.y = element_text(size = rel(1)),
+                            strip.text.x = element_text(size = rel(1)),
+                            legend.title = element_text(size = rel(1)),
+                            legend.text = element_text(size = rel(0.75))))
             #strip.text.x = element_text(size=6)))
         dev.off()
     }
 
+    
     ##################
     ##################
     ### ensemble description
@@ -489,10 +488,11 @@ for (i in seq_along(variables)) {
         if(j == "diff") {
             title <- "Projected variations in abundance of Caribou high quality habitats (HQH)\nFrom 2010 to 2100 - Summary of simulation ensemble"
             x$value <- x$value*100
-            colScale <- scale_fill_gradient2(name = paste0("Percent change in proportion of HQH\n(comparable to initial ",
-                                                           names(variables)[i], ")"),
+            colScale <- scale_fill_gradient2(name = paste0("Percent change in proportion of HQH "),
                                              low = "#4477AA", mid = "white", high = "#BB4444", midpoint = 0,
-                                             limits = c(floor(min(x$value)/10)*10, ceiling(max(x$value)/10)*10))
+                                             limits = c(floor(min(x$value)/10)*10, ceiling(max(x$value)/10)*10))#,
+                                             #guide = guide_legend(title.position = "left",
+                                             #                     title.hjust = 0.5))
 
         }
         if (j == "final") {
@@ -504,10 +504,11 @@ for (i in seq_along(variables)) {
                                labels = labels,
                                include.lowest = T)
             colFunc <- colorRampPalette(c("white", "darkolivegreen"))
-            colScale <- scale_fill_manual(name = paste0("Proportion of HQH\n(Comparable to initial ",
-                                                        names(variables)[i], ")"),
+            colScale <- scale_fill_manual(name = paste0("Proportion of HQH "),
                                           breaks = levels(x$value),
-                                          values = colFunc(length(breaks)-1), drop = F)
+                                          values = colFunc(length(breaks)-1), drop = F,
+                                          guide = guide_legend(title.position = "left",
+                                                              title.hjust = 0))
 
 
         }
@@ -526,15 +527,16 @@ for (i in seq_along(variables)) {
             facet_grid( ~ variable) +
             # colScale +
             theme_bw()
+            
 
             #facet_grid(fire ~ harvest) +
 
 
         png(filename = paste0("caribouRS_HQHensemble_",j, "_", variables[i], ".png"),
-            width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
+            width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 12,
             bg = "white")
 
-            print(g + labs(title = title) +
+            print(g + #labs(title = title) +
                       #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate\n", names(variables[i]))) +
                       colScale +
                       theme(legend.position="top", legend.direction="horizontal",
@@ -542,15 +544,13 @@ for (i in seq_along(variables)) {
                             axis.title.x = element_text(size = rel(0.7)),
                             axis.title.y = element_text(size = rel(0.7)),
                             #axis.ticks = element_blank(),
-                            axis.text.x = element_text(size = rel(0.5)),
-                            axis.text.y =  element_text(size = rel(0.5)),
+                            axis.text.x = element_text(size = rel(0.75)),
+                            axis.text.y =  element_text(size = rel(0.75)),
                             #strip.background = element_blank(),
-                            strip.text.y = element_text(size = rel(0.7)),
-                            strip.text.x = element_text(size = rel(0.7)),
-                            legend.title = element_text(size = rel(0.5)),
-                            legend.text = element_text(size = rel(0.4)))
-
-                     )
+                            strip.text.y = element_text(size = rel(1)),
+                            strip.text.x = element_text(size = rel(1)),
+                            legend.title = element_text(size = rel(1)),
+                            legend.text = element_text(size = rel(0.75))))
 
         #strip.text.x = element_text(size=6)))
         dev.off()
@@ -571,9 +571,11 @@ for (i in seq_along(variables)) {
                        labels = labels,
                        include.lowest = T)
     colFunc <- colorRampPalette(c("white", "darkolivegreen"))
-    colScale <- scale_fill_manual(name = paste0("Proportion of HQH\n(", names(variables)[i], ")"),
+    colScale <- scale_fill_manual(name = paste0("Proportion of HQH"),
                                   breaks = levels(x$value),
-                                  values = colFunc(length(breaks)-1), drop = F)
+                                  values = colFunc(length(breaks)-1), drop = F,
+                                  guide = guide_legend(title.position = "top",
+                                                       title.hjust = 0))
 
 
     pWidth  <- 1000
@@ -584,6 +586,7 @@ for (i in seq_along(variables)) {
         geom_polygon(colour = 'grey25', alpha = 1, size = .1) +
         coord_fixed(ratio = figRatio) +
         theme_bw()
+       
 
     #facet_grid(fire ~ harvest) +
 
@@ -592,23 +595,20 @@ for (i in seq_along(variables)) {
         width = pWidth, height = pHeight, units = "px", res = 300, pointsize = 8,
         bg = "white")
 
-    print(g + labs(title = title) +
+    print(g + #labs(title = title) +
               #ggtitle(paste0("Caribou habitat in 2100 - ", s, " climate\n", names(variables[i]))) +
               colScale +
-              theme(legend.position="top", legend.direction="horizontal",
+              theme(legend.position="top",  legend.direction="horizontal",
                     plot.title = element_text(size = rel(0.6)),
                     axis.title.x = element_text(size = rel(0.7)),
                     axis.title.y = element_text(size = rel(0.7)),
                     #axis.ticks = element_blank(),
-                    axis.text.x = element_text(size = rel(0.5)),
-                    axis.text.y =  element_text(size = rel(0.5)),
+                    axis.text.x = element_text(size = rel(0.75)),
+                    axis.text.y =  element_text(size = rel(0.75)),
                     #strip.background = element_blank(),
-                    strip.text.y = element_text(size = rel(0.7)),
-                    strip.text.x = element_text(size = rel(0.7)),
-                    legend.title = element_text(size = rel(0.5)),
-                    legend.text = element_text(size = rel(0.4)))
+                    legend.title = element_text(size = rel(1)),
+                    legend.text = element_text(size = rel(0.75))))
 
-    )
 
     #strip.text.x = element_text(size=6)))
     dev.off()

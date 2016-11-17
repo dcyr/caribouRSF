@@ -24,42 +24,89 @@ totalArea <- sum(values(studyAreaR), na.rm = T) * 6.25
 #########
 ############################################################
 ############################################################
+#fond <- get_map(location = "Lac St-Jean", zoom = 6, source = "google")
+fond <- get_map(location = bbox(studyArea), zoom = 4,  source = "google", maptype = "terrain")#, maptype = "roadmap"
 
-fond <- get_map(location = "Lac St-Jean", zoom = 6, source = "google")
 
 map <- ggmap(fond) +
     geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
-                 colour = 'black', fill = 'black', alpha = .3, size = .3)
+                 colour = 'black', fill = 'black', alpha = .3, size = .3) +
+    labs(x = "longitude",
+         y = "latitude")
 
-xBreaks <- seq(from = floor(min(studyAreaF$long)), to = ceiling(max(studyAreaF$long)), by = 1)
-yBreaks <- seq(from = floor(min(studyAreaF$lat)), to = ceiling(max(studyAreaF$lat)), by = 1)
+xBreaks <- seq(from = -75, to = -69, by = 2)
+yBreaks <- seq(from = 47, to = 52, by = 1)
 
 xRange <- as.numeric(attr(fond, "bb")[c(2,4)])
 yRange <- as.numeric(attr(fond, "bb")[c(1,3)])
 
-png(filename = "studyArea.png",
-    width = 2000, height = 2000, units = "px", res = 300, pointsize = 12,
+png(filename = "studyAreaSmallScale.png",
+    width = 1024, height = 1024, units = "px", res = 300, pointsize = 12,
     bg = "white")
 
-    print(map + ggtitle("CBFA Caribou - Study area") +
-              annotate("text", label = paste("Total area:", signif(totalArea, 3)/1000000, "Mha"),
-                       x = xRange[2] - 0.2, y = yRange[2] + 0.1, hjust = 1, vjust = 0, size = 4, colour = "black") +
-              geom_vline(xintercept = xBreaks, color = "white", alpha = 0.25, size = 0.25) +
-              geom_hline(yintercept = yBreaks, color = "white", alpha = 0.25, size = 0.25) +
+    print(map + #ggtitle("CBFA Caribou - Study area") +
+             #annotate("text", label = paste("Total area:", signif(totalArea, 3)/1000000, "Mha"),
+             #          x = xRange[2] - 0.2, y = yRange[2] + 0.1, hjust = 1, vjust = 0, size = 4, colour = "black") +
+              #geom_vline(xintercept = xBreaks, color = "white", alpha = 0.4, size = 0.25) +
+              #geom_hline(yintercept = yBreaks, color = "white", alpha = 0.4, size = 0.25) +
 
-              scale_x_continuous(breaks = xBreaks,
-                                 minor_breaks = waiver()) +
-              scale_y_continuous(breaks = yBreaks,
-                                 minor_breaks = waiver()) +
+              # scale_x_continuous(breaks = xBreaks,
+              #                    minor_breaks = waiver()) +
+              # scale_y_continuous(breaks = yBreaks,
+              #                    minor_breaks = waiver()) +
               theme_bw() +
+              coord_map(projection = "mercator", 
+                        xlim=c(attr(fond, "bb")$ll.lon, attr(fond, "bb")$ur.lon),
+                        ylim=c(attr(fond, "bb")$ll.lat, attr(fond, "bb")$ur.lat)) +
+              theme_nothing() +
               theme(plot.title = element_text(size = rel(1.2)),
-                    axis.title.x = element_blank(),
-                    axis.title.y = element_blank(),
+                    axis.title = element_text(size = rel(0.5)),
+                    axis.text = element_text(size = rel(0.5)),
+                    #axis.title.x = element_blank(),
+                    #axis.title.y = element_blank(),
                     panel.grid.major = element_line(size = 0.25))
           )
 
 dev.off()
 
+
+fond <- get_map(location = bbox(studyArea), source = "google", maptype = "hybrid")
+
+
+map <- ggmap(fond) +
+    geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
+                 colour = 'white', fill = 'red', alpha = .1, size = .3) +
+    labs(x = "longitude",
+         y = "latitude")
+
+png(filename = "studyAreaLargeScale.png",
+    width = 2000, height = 2000, units = "px", res = 300, pointsize = 12,
+    bg = "white")
+
+print(map + #ggtitle("CBFA Caribou - Study area") +
+          #annotate("text", label = paste("Total area:", signif(totalArea, 3)/1000000, "Mha"),
+          #          x = xRange[2] - 0.2, y = yRange[2] + 0.1, hjust = 1, vjust = 0, size = 4, colour = "black") +
+          #geom_vline(xintercept = xBreaks, color = "white", alpha = 0.4, size = 0.25) +
+          #geom_hline(yintercept = yBreaks, color = "white", alpha = 0.4, size = 0.25) +
+          
+          # scale_x_continuous(breaks = xBreaks,
+          #                    minor_breaks = waiver()) +
+          # scale_y_continuous(breaks = yBreaks,
+          #                    minor_breaks = waiver()) +
+          theme_bw() +
+          coord_map(projection = "mercator", 
+                    xlim=c(attr(fond, "bb")$ll.lon, attr(fond, "bb")$ur.lon),
+                    ylim=c(attr(fond, "bb")$ll.lat, attr(fond, "bb")$ur.lat)) +
+          #theme_nothing() +
+          theme(plot.title = element_text(size = rel(1.2)),
+                axis.title = element_text(size = rel(1)),
+                axis.text = element_text(size = rel(1)),
+                #axis.title.x = element_blank(),
+                #axis.title.y = element_blank(),
+                panel.grid.major = element_line(size = 0.25))
+)
+
+dev.off()
 
 ############################################################
 ############################################################
