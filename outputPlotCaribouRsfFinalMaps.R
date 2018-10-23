@@ -18,7 +18,12 @@ figRatio <- 111/71
 ##################################################################################################################
 ##################################################################################################################
 ########  Plotting initial conditions
+## if done for the first time:
+## caribouRS <- get(load(file.choose())) # any raster stack with a valid layer for initial conditions
+## caribouRsInit <- caribouRS[[1]]
+## save(caribouRsInit, file = "caribouRsInit.RData")
 caribouRsInit <- get(load("../processedOutputs/caribouRsInit.RData"))
+threshHQH <- quantile(caribouRsInit, c(0.75, 0.95))
 r <- projectRaster(caribouRsInit, crs = CRS("+init=epsg:4326"))
 df <- rasterToPoints(r)
 df <- data.frame(df)
@@ -81,7 +86,10 @@ studyAreaF <- fortify(studyArea)
 #### plotting each climate change scenario
 for (s in levels(caribouRsMeanFinalDF$scenario)) {
 
-    df <- filter(caribouRsMeanFinalDF, scenario == s)
+    df <- caribouRsMeanFinalDF %>%
+        filter(scenario == s,
+               budworm == T,
+               fire != "No Fires")
     df <- droplevels(df)
     pWidth  <- 1400
     pHeight <- ifelse(length(levels(df$fire)) == 1, 1200, 850*length(levels(df$fire)))
@@ -124,7 +132,9 @@ for (s in levels(caribouRsMeanFinalDF$scenario)) {
 #### plotting worst-case, average, and best-case scenarios
 
 df <- caribouRsMeanFinalDF %>%
-    filter(scenario != "baseline")#,
+    filter(scenario != "baseline",
+           budworm == T,
+           fire != "No Fires")#,
            #harvest != "Harvesting level: 50%")
 
 ensembleSummary <- df %>%
@@ -137,11 +147,12 @@ meanDf <- df %>%
     summarise(value = mean(value)) %>%
     mutate(var = "Average scenario")
 
+
 df <- rbind(data.frame(df[which(df$variable == as.character(ensembleSummary[which.max(ensembleSummary$meanRScall), "variable"])), colnames(meanDf)[1:3]],
                        var = "Best-case scenario"),
             data.frame(df[which(df$variable == as.character(ensembleSummary[which.min(ensembleSummary$meanRScall), "variable"])), colnames(meanDf)[1:3]],
                        var = "Worst-case scenario"),
-            meanDf)
+            as.data.frame(meanDf))
 
 df$var <- factor(df$var, levels = c("Worst-case scenario", "Average scenario", "Best-case scenario"))
 
@@ -210,12 +221,15 @@ colScale <- scale_fill_gradientn(name = "RS call departure\n(final - initial)",
                      limits = c(-0.55, 0.55),
                      #colours = c("darkred", "darkred", "gold2", "white", "palegreen3", "darkgreen", "darkgreen"),
                      colours = c("darkblue", "darkblue", "lightblue","white", "gold2", "darkred", "darkred")) 
- +#,#c("white", "lightblue", "seagreen4", "gold2", "darkred"),
+ #+#,#c("white", "lightblue", "seagreen4", "gold2", "darkred"),
 
 
 for (s in levels(caribouRsFinalDiffDF$scenario)) {
 
-    df <- filter(caribouRsFinalDiffDF, scenario == s)
+    df <- caribouRsFinalDiffDF %>% 
+        filter(scenario == s,
+               budworm == T,
+               fire != "No Fires")
     df <- droplevels(df)
     pWidth  <- 1400
     pHeight <- ifelse(length(levels(df$fire)) == 1, 1200, 850*length(levels(df$fire)))
@@ -261,8 +275,9 @@ for (s in levels(caribouRsFinalDiffDF$scenario)) {
 #### plotting worst-case, average, and best-case scenarios
 
 df <- caribouRsFinalDiffDF %>%
-    filter(scenario != "baseline")#,
-           #harvest != "Harvesting level: 50%")
+    filter(scenario == s,
+           budworm == T,
+           fire != "No Fires")#harvest != "Harvesting level: 50%")
 
 
 ensembleSummary <- df %>%
@@ -278,7 +293,7 @@ df <- rbind(data.frame(df[which(df$variable == as.character(ensembleSummary[whic
                        var = "Best-case scenario"),
             data.frame(df[which(df$variable == as.character(ensembleSummary[which.min(ensembleSummary$meanRScall), "variable"])), colnames(meanDf)[1:3]],
                        var = "Worst-case scenario"),
-            meanDf)
+            as.data.frame(meanDf))
 
 df$var <- factor(df$var, levels = c("Worst-case scenario", "Average scenario", "Best-case scenario"))
 
@@ -345,18 +360,18 @@ studyAreaF <- fortify(studyArea)
 ### summarizing results by ecodistrict
 require(dplyr)
 df <- caribouRS_ecodist_mean %>%
+    filter(budworm == "Budworm",
+           fire != "No fires") %>%
     group_by(scenario, ecodistrict, fire, harvest, time) %>%
     summarise(caribouRS_mean = mean(caribouRS_mean),
-              h50 = mean(h50),
               h75 = mean(h75),
-              h90 = mean(h90),
-              h95 = mean(h95)) %>%
+              h90 = mean(h90)) %>%
     ungroup()
 
 ### extracting initial conditions, creating separate df
 initDf <- df %>%
     filter(time == 0, scenario == "baseline", fire == "Fire regime: baseline", harvest == "Harvesting level: 100%") %>%
-    select(ecodistrict, caribouRS_mean, h50, h75, h90, h95)
+    select(ecodistrict, caribouRS_mean, h75, h90)
 
 initDf <- as.data.frame(initDf)
 
@@ -403,7 +418,7 @@ ensembleDf <- melt(ensembleDf, id  = "ecodistrict")
 ###
 
 ## selecting variables to plot
-variables <- colnames(df)[c(8:9)]
+variables <- colnames(df)[c(7:8)]
 names(variables) <- c("best 25%", "best 10%")
 
 df <- merge(df, initDf, by =  "ecodistrict", suffixes = c("",".init"))

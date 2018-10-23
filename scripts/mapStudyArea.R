@@ -8,9 +8,11 @@ rm(wwd)
 require(raster)
 require(ggmap)
 require(rgdal)
+require(OpenStreetMap)
+
 
 studyArea <- readOGR(dsn = "../data", layer = "LSJ_Caribou_Extent")
-studyArea <- spTransform(studyArea, CRS("+init=epsg:4326"))
+studyAreaLL <- spTransform(studyArea, CRS("+init=epsg:4326"))
 studyAreaF <- fortify(studyArea)
 studyAreaR <- raster("../initRasters/areaExtentCaribou.tif")
 totalArea <- sum(values(studyAreaR), na.rm = T) * 6.25
@@ -25,10 +27,21 @@ totalArea <- sum(values(studyAreaR), na.rm = T) * 6.25
 ############################################################
 ############################################################
 #fond <- get_map(location = "Lac St-Jean", zoom = 6, source = "google")
-fond <- get_map(location = bbox(studyArea), zoom = 4,  source = "google", maptype = "terrain")#, maptype = "roadmap"
+#fond <- get_map(location = bbox(studyArea), zoom = 4,  source = "google", maptype = "terrain")#, maptype = "roadmap"
+bb <- bbox(studyAreaLL)
+bb[,1] <- bb[,1]-5
+bb[,2] <- bb[,2]+5
+
+system.time(fond <- openmap(upperLeft = c(bb[2,2],bb[1,1]),
+                lowerRight = c(bb[2,1],bb[1,2]),
+                #type = "stamen-terrain"))
+                type = "bing"))
+
+fond <- openproj(fond, projection = crs(studyArea))#"+proj=longlat") 
 
 
-map <- ggmap(fond) +
+map <- #ggmap(fond) +
+    autoplot(fond) +
     geom_polygon(aes(x = long, y = lat, group = group), data = studyAreaF,
                  colour = 'black', fill = 'black', alpha = .3, size = .3) +
     labs(x = "longitude",
@@ -37,8 +50,10 @@ map <- ggmap(fond) +
 xBreaks <- seq(from = -75, to = -69, by = 2)
 yBreaks <- seq(from = 47, to = 52, by = 1)
 
-xRange <- as.numeric(attr(fond, "bb")[c(2,4)])
-yRange <- as.numeric(attr(fond, "bb")[c(1,3)])
+# xRange <- as.numeric(attr(fond, "bb")[c(2,4)])
+# yRange <- as.numeric(attr(fond, "bb")[c(1,3)])
+xRange <- as.numeric(fond$bbox)[c(2,4)])
+yRange <- as.numeric(attr(fond, "bbox")[c(1,3)])
 
 png(filename = "studyAreaSmallScale.png",
     width = 1024, height = 1024, units = "px", res = 300, pointsize = 12,
