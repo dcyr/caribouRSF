@@ -1,6 +1,6 @@
 ###### Dominic Cyr, in collaboration with Yan Boulanger and Martin-Hugues St-Laurent
 rm(list = ls())
-setwd("~/Travail/SCF/CBFA/caribou")
+setwd("E:/SCF/CBFA/caribou")
 ####################################################################################################
 ####################################################################################################
 wwd <- paste(getwd(), Sys.Date(), sep = "/")
@@ -111,13 +111,13 @@ p <- ggplot(aes(y=value, x=scenario, fill = variable), data = results) +
 
 
 
-png(filename = "variationDecomp.png",
+png(filename = paste0("variationDecomp_", ts, ".png"),
     width = 8, height = 5, units = "in", res = 300, pointsize=8)
 
 print(p +
           theme_dark()+
           labs(title ="Variation partitioning of caribou habitat quality",
-               subtitle = "After 100 years of simulation (horizon 2100)",
+               subtitle = paste0("After ", ts, " years of simulation (horizon ", 2000+ts, ")"),
                caption = "*Values < 0.001 not shown",
                x = "",
                y = expression(omega^2 ~ "*")) +#"Omega squared*\n") +
