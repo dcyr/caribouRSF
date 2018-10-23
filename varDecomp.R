@@ -50,7 +50,7 @@ distinct(caribouRS_mean[, c("scenario", "fire", "harvest", "growth")])
 
 #################################################################################
 ## Performing variance partitionning for all years and species
-ts <- 100 ## final timesteps, simulation is omitted if timestep unavailable
+ts <- 30 ## final timesteps, simulation is omitted if timestep unavailable
 
 
 
