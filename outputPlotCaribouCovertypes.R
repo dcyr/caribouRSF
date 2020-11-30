@@ -1,5 +1,5 @@
 rm(list = ls())
-setwd("~/Travail/SCF/CBFA/caribou")
+setwd("E:/SCF/CBFA/caribou")
 wwd <- paste(getwd(), Sys.Date(), sep = "/")
 dir.create(wwd)
 setwd(wwd)
@@ -117,16 +117,15 @@ col1 <- col2rgb("#4477AA")/255 # nice blue
 col2 <- col2rgb("white")/255 
 col3 <- col2rgb("#BB4444")/255 # nice red
 
-
-coverNames <- c(fire0_9 = "fire 0-9",
-                harvest0_9 = "harv 0-9",
-                fire10_49 = "fire 10-49",
-                conifHarv10_49 = "conif harv 10-49",
-                decidHarv10_49 = "decid harv 10-49",
-                decidOther10_49 = "decid other 10-49",
-                conif50_89 = "conif 50-89",
-                decid50_89 = "decid 50-89",
-                conif90 = "conif 90+")           
+coverNames <- c(fire0_9 = "Fire_0-9",
+                harvest0_9 = "Cut_0-9",
+                fire10_49 = "Fire_10-49",
+                conifHarv10_49 = "ConifCut_10-49",
+                decidHarv10_49 = "DecidCut_10-49",
+                decidOther10_49 = "DecidOth_10-49",
+                conif50_89 = "Conif_50-89",
+                decid50_89 = "Decid_50-89",
+                conif90 = "Conif_90+")           
 
     
 n <- length(unique(paste(df$fire, df$scenario)))

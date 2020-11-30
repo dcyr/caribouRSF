@@ -50,7 +50,7 @@ distinct(caribouRS_mean[, c("scenario", "fire", "harvest", "growth")])
 
 #################################################################################
 ## Performing variance partitionning for all years and species
-ts <- 30 ## final timesteps, simulation is omitted if timestep unavailable
+ts <- 100 ## final timesteps, simulation is omitted if timestep unavailable
 
 
 
@@ -102,7 +102,7 @@ p <- ggplot(aes(y=value, x=scenario, fill = variable), data = results) +
     # coord_flip() +
     geom_text(aes(label=paste0(round(100*value,1), "%")),
               position = position_stack(reverse = T), angle = 0, vjust = 1.25, hjust = 0.5,
-              check_overlap = T, size = rel(2.5), colour = "white") +
+              check_overlap = T, size = rel(4.5), colour = "white") +
     # geom_text(aes(x = c(1,2,1,2), y = 1, label=paste0("residual\n12%")),
     #           angle = 0, vjust = 1.25, hjust = 0.5,
     #           check_overlap = T, size = rel(2.5), colour = "white") +
@@ -118,12 +118,16 @@ print(p +
           theme_dark()+
           labs(title ="Variation partitioning of caribou habitat quality",
                subtitle = paste0("After ", ts, " years of simulation (horizon ", 2000+ts, ")"),
-               caption = "*Values < 0.001 not shown",
+               #caption = "*Values < 0.001 not shown",
                x = "",
                y = expression(omega^2 ~ "*")) +#"Omega squared*\n") +
           theme(#legend.position="top", legend.direction="horizontal",
-              # axis.text.x = element_text(angle = 45, hjust = 1),
-              plot.caption=element_text(size=rel(0.7)))
+              strip.text.x = element_text(size=rel(1.25)),
+              axis.title.y = element_text(size=rel(1.5)),
+             # legend.text = element_text(size=rel(1.5)),
+              axis.text.y = element_text(size=rel(1.5)), 
+              axis.text.x = element_text(angle = 45, hjust = 1, size=rel(2)),
+              plot.caption=element_text(size=rel(1)))
 )
 
 

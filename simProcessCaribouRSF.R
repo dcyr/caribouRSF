@@ -2,6 +2,7 @@
 ##################################################################
 #### Dominic Cyr
 ##################################################################
+setwd("E:/SCF/CBFA/caribou")
 wwd <- (paste(getwd(), Sys.Date(), sep ="/"))
 dir.create(wwd)
 setwd(wwd)
@@ -20,7 +21,7 @@ require(parallel)
 ##################################################################
 ### User defined variables
 ##################################################################
-simRoot <- "/media/dcyr/Data/Sims/LSJ" ## where the simulations are
+simRoot <- "E:/Sims/LSJFull/" ## where the simulations are
 #simRoot <- "/media/dcyr/Seagate Backup Plus Drive/Sims/LSJ" ## where the simulations are
 ### might have to specify working directory if you don't run the script from the command line
 # setwd("/home/dcyr/Travail/SCF/CBFA/caribou")
